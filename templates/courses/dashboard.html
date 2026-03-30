@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Hero greeting -->
+<div class="mb-8">
+  <h1 class="text-3xl font-extrabold tracking-tight">
+    Welcome back, <span class="bg-gradient-to-r from-brand-500 to-brand-700 bg-clip-text text-transparent">{{ user.get_short_name|default:user.username }}</span>
+  </h1>
+  <p class="mt-1 text-surface-400">
+    {% if user.is_instructor %}Manage your courses and track student progress.{% else %}Continue learning or discover new courses.{% endif %}
+  </p>
+</div>
+
+{% if user.is_instructor %}
+<!-- ═══════════════ INSTRUCTOR DASHBOARD ═══════════════ -->
+<div class="grid gap-6 sm:grid-cols-3 mb-10">
+  <div class="card flex items-center gap-4">
+    <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-lg shadow-brand-200">
+      <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/></svg>
+    </div>
+    <div>
+      <p class="text-2xl font-bold text-surface-800">{{ my_courses.count }}</p>
+      <p class="text-xs font-medium text-surface-400 uppercase tracking-wider">Courses</p>
+    </div>
+  </div>
+  <div class="card flex items-center gap-4">
+    <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-white shadow-lg shadow-emerald-200">
+      <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"/></svg>
+    </div>
+    <div>
+      <p class="text-2xl font-bold text-surface-800">{{ total_students }}</p>
+      <p class="text-xs font-medium text-surface-400 uppercase tracking-wider">Students Enrolled</p>
+    </div>
+  </div>
+  <div class="card flex items-center gap-4">
+    <a href="{% url 'courses:course_create' %}" class="btn-primary w-full !py-4 text-center">
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+      Create New Course
+    </a>
+  </div>
+</div>
+
+<!-- Instructor's Courses -->
+<h2 class="mb-4 text-lg font-bold text-surface-700">Your Courses</h2>
+{% if my_courses %}
+<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  {% for course in my_courses %}
+  <div class="card group">
+    {% if course.thumbnail %}
+      <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="mb-4 h-40 w-full rounded-xl object-cover">
+    {% else %}
+      <div class="mb-4 flex h-40 items-center justify-center rounded-xl bg-gradient-to-br from-brand-100 to-brand-200">
+        <svg class="h-12 w-12 text-brand-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342"/></svg>
+      </div>
+    {% endif %}
+    <div class="flex items-start justify-between">
+      <div>
+        <h3 class="font-bold text-surface-800 group-hover:text-brand-600 transition">{{ course.title }}</h3>
+        <p class="mt-1 text-xs text-surface-400">{{ course.total_lessons }} lessons · {{ course.enrolled_count }} students</p>
+      </div>
+      <span class="rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider
+        {% if course.status == 'published' %}bg-emerald-100 text-emerald-700
+        {% elif course.status == 'draft' %}bg-amber-100 text-amber-700
+        {% else %}bg-surface-100 text-surface-500{% endif %}">{{ course.get_status_display }}</span>
+    </div>
+    <div class="mt-4 flex gap-2">
+      <a href="{{ course.get_absolute_url }}" class="btn-secondary !py-1.5 !px-3 !text-xs flex-1 text-center">View</a>
+      <a href="{% url 'courses:course_update' course.slug %}" class="btn-secondary !py-1.5 !px-3 !text-xs flex-1 text-center">Edit</a>
+      <a href="{% url 'courses:lesson_create' course.slug %}" class="btn-primary !py-1.5 !px-3 !text-xs flex-1 text-center">+ Lesson</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card text-center py-16">
+  <svg class="mx-auto h-16 w-16 text-surface-200" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/></svg>
+  <p class="mt-4 text-surface-400">You haven't created any courses yet.</p>
+  <a href="{% url 'courses:course_create' %}" class="btn-primary mt-4 inline-flex">Create Your First Course</a>
+</div>
+{% endif %}
+
+{% else %}
+<!-- ═══════════════ STUDENT DASHBOARD ═══════════════ -->
+<!-- Enrolled Courses -->
+<h2 class="mb-4 text-lg font-bold text-surface-700">My Courses</h2>
+{% if enrollments %}
+<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-10">
+  {% for enrollment in enrollments %}
+  <div class="card group">
+    {% if enrollment.course.thumbnail %}
+      <img src="{{ enrollment.course.thumbnail.url }}" alt="{{ enrollment.course.title }}" class="mb-4 h-40 w-full rounded-xl object-cover">
+    {% else %}
+      <div class="mb-4 flex h-40 items-center justify-center rounded-xl bg-gradient-to-br from-brand-100 to-brand-200">
+        <svg class="h-12 w-12 text-brand-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342"/></svg>
+      </div>
+    {% endif %}
+    <h3 class="font-bold text-surface-800 group-hover:text-brand-600 transition">{{ enrollment.course.title }}</h3>
+    <p class="mt-1 text-xs text-surface-400">By {{ enrollment.course.instructor.get_full_name|default:enrollment.course.instructor.username }} · {{ enrollment.course.total_lessons }} lessons</p>
+    <div class="mt-4 flex gap-2">
+      <a href="{{ enrollment.course.get_absolute_url }}" class="btn-primary !py-1.5 !px-3 !text-xs flex-1 text-center">Continue Learning</a>
+      <form method="post" action="{% url 'courses:unenroll' enrollment.course.slug %}" class="flex-1">
+        {% csrf_token %}
+        <button type="submit" class="btn-secondary !py-1.5 !px-3 !text-xs w-full">Unenroll</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card text-center py-12 mb-10">
+  <p class="text-surface-400">You haven't enrolled in any courses yet.</p>
+</div>
+{% endif %}
+
+<!-- Discover Courses -->
+<h2 class="mb-4 text-lg font-bold text-surface-700">Discover Courses</h2>
+{% if available_courses %}
+<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  {% for course in available_courses %}
+  <div class="card group">
+    {% if course.thumbnail %}
+      <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="mb-4 h-40 w-full rounded-xl object-cover">
+    {% else %}
+      <div class="mb-4 flex h-40 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-200">
+        <svg class="h-12 w-12 text-emerald-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/></svg>
+      </div>
+    {% endif %}
+    <h3 class="font-bold text-surface-800 group-hover:text-brand-600 transition">{{ course.title }}</h3>
+    <p class="mt-1 text-xs text-surface-400">By {{ course.instructor.get_full_name|default:course.instructor.username }} · {{ course.total_lessons }} lessons</p>
+    <form method="post" action="{% url 'courses:enroll' course.slug %}" class="mt-4">
+      {% csrf_token %}
+      <button type="submit" class="btn-primary !py-1.5 !text-xs w-full">Enroll Now — Free</button>
+    </form>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card text-center py-12">
+  <p class="text-surface-400">No new courses available right now. Check back soon!</p>
+</div>
+{% endif %}
+
+{% endif %}
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Browse Courses{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+  <h1 class="text-3xl font-extrabold tracking-tight">Course Catalogue</h1>
+  <p class="mt-1 text-surface-400">Explore our published courses and start learning today.</p>
+</div>
+
+{% if courses %}
+<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  {% for course in courses %}
+  <a href="{{ course.get_absolute_url }}" class="card group block">
+    {% if course.thumbnail %}
+      <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="mb-4 h-44 w-full rounded-xl object-cover">
+    {% else %}
+      <div class="mb-4 flex h-44 items-center justify-center rounded-xl bg-gradient-to-br from-brand-100 to-brand-200">
+        <svg class="h-14 w-14 text-brand-300" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342"/></svg>
+      </div>
+    {% endif %}
+    <h3 class="font-bold text-surface-800 group-hover:text-brand-600 transition">{{ course.title }}</h3>
+    <p class="mt-1 line-clamp-2 text-sm text-surface-500">{{ course.description|truncatewords:20 }}</p>
+    <div class="mt-3 flex items-center justify-between text-xs text-surface-400">
+      <span>{{ course.instructor.get_full_name|default:course.instructor.username }}</span>
+      <span>{{ course.total_lessons }} lessons · {{ course.enrolled_count }} students</span>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if is_paginated %}
+<div class="mt-10 flex items-center justify-center gap-2">
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}" class="btn-secondary !py-2 !px-4 !text-xs">&larr; Previous</a>
+  {% endif %}
+  <span class="px-4 py-2 text-sm text-surface-500">Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" class="btn-secondary !py-2 !px-4 !text-xs">Next &rarr;</a>
+  {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="card text-center py-16">
+  <p class="text-surface-400">No courses published yet. Check back soon!</p>
+</div>
+{% endif %}
+{% endblock %}

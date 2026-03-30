@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{% if form.instance.pk %}Edit{% else %}Create{% endif %} Course{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-2xl">
+  <div class="card !p-8">
+    <h1 class="mb-6 text-2xl font-extrabold text-surface-800">
+      {% if form.instance.pk %}Edit Course{% else %}Create New Course{% endif %}
+    </h1>
+
+    <form method="post" enctype="multipart/form-data" class="space-y-5" id="course-form">
+      {% csrf_token %}
+      {% for field in form %}
+      <div>
+        <label for="{{ field.id_for_label }}" class="mb-1 block text-xs font-semibold uppercase tracking-wider text-surface-500">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+          <p class="mt-1 text-xs text-surface-400">{{ field.help_text }}</p>
+        {% endif %}
+        {% for error in field.errors %}
+          <p class="mt-1 text-xs text-red-500">{{ error }}</p>
+        {% endfor %}
+      </div>
+      {% endfor %}
+
+      <div class="flex gap-3 pt-2">
+        <button type="submit" class="btn-primary">
+          {% if form.instance.pk %}Save Changes{% else %}Create Course{% endif %}
+        </button>
+        <a href="{% url 'courses:dashboard' %}" class="btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

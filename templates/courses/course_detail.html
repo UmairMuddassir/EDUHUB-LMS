@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+  <a href="{% url 'courses:course_list' %}" class="mb-4 inline-flex items-center gap-1 text-sm text-brand-600 hover:text-brand-700 font-medium">
+    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/></svg>
+    Back to courses
+  </a>
+</div>
+
+<div class="grid gap-8 lg:grid-cols-3">
+  <!-- Main Content -->
+  <div class="lg:col-span-2">
+    <div class="card !p-0 overflow-hidden">
+      {% if course.thumbnail %}
+        <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="h-64 w-full object-cover">
+      {% else %}
+        <div class="flex h-64 items-center justify-center bg-gradient-to-br from-brand-100 via-brand-200 to-brand-300">
+          <svg class="h-20 w-20 text-brand-400" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342"/></svg>
+        </div>
+      {% endif %}
+      <div class="p-6">
+        <h1 class="text-2xl font-extrabold text-surface-800">{{ course.title }}</h1>
+        <p class="mt-1 text-sm text-surface-400">By {{ course.instructor.get_full_name|default:course.instructor.username }} · {{ course.enrolled_count }} students enrolled</p>
+        <div class="mt-4 text-surface-600 leading-relaxed">{{ course.description|linebreaks }}</div>
+      </div>
+    </div>
+
+    <!-- Lessons List -->
+    <h2 class="mb-4 mt-8 text-lg font-bold text-surface-700">Lessons ({{ lessons.count }})</h2>
+    {% if lessons %}
+    <div class="space-y-3">
+      {% for lesson in lessons %}
+      <a href="{{ lesson.get_absolute_url }}" class="card flex items-center gap-4 !py-4 group block">
+        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-sm font-bold text-brand-600 group-hover:bg-brand-500 group-hover:text-white transition">
+          {{ lesson.order }}
+        </span>
+        <div>
+          <h3 class="font-semibold text-surface-800 group-hover:text-brand-600 transition">{{ lesson.title }}</h3>
+          {% if lesson.ai_summary %}
+            <p class="mt-0.5 text-xs text-surface-400 line-clamp-1">{{ lesson.ai_summary }}</p>
+          {% endif %}
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="card text-center py-10">
+      <p class="text-surface-400">No lessons added yet.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Sidebar -->
+  <div class="space-y-6">
+    <div class="card">
+      <h3 class="mb-3 text-sm font-bold uppercase tracking-wider text-surface-400">Course Info</h3>
+      <dl class="space-y-3 text-sm">
+        <div class="flex justify-between"><dt class="text-surface-500">Status</dt><dd class="font-semibold">{{ course.get_status_display }}</dd></div>
+        <div class="flex justify-between"><dt class="text-surface-500">Lessons</dt><dd class="font-semibold">{{ course.total_lessons }}</dd></div>
+        <div class="flex justify-between"><dt class="text-surface-500">Students</dt><dd class="font-semibold">{{ course.enrolled_count }}</dd></div>
+        <div class="flex justify-between"><dt class="text-surface-500">Created</dt><dd class="font-semibold">{{ course.created_at|date:"M d, Y" }}</dd></div>
+      </dl>
+    </div>
+
+    {% if user.is_authenticated %}
+      {% if user.is_student %}
+        {% if is_enrolled %}
+          <form method="post" action="{% url 'courses:unenroll' course.slug %}">
+            {% csrf_token %}
+            <button type="submit" class="btn-secondary w-full">Unenroll</button>
+          </form>
+        {% else %}
+          <form method="post" action="{% url 'courses:enroll' course.slug %}">
+            {% csrf_token %}
+            <button type="submit" class="btn-primary w-full">Enroll Now — Free</button>
+          </form>
+        {% endif %}
+      {% endif %}
+
+      {% if user.is_instructor and course.instructor == user %}
+        <div class="space-y-2">
+          <a href="{% url 'courses:course_update' course.slug %}" class="btn-secondary w-full text-center block">Edit Course</a>
+          <a href="{% url 'courses:lesson_create' course.slug %}" class="btn-primary w-full text-center block">+ Add Lesson</a>
+          <a href="{% url 'courses:course_delete' course.slug %}" class="btn-danger w-full text-center block">Delete Course</a>
+        </div>
+      {% endif %}
+    {% else %}
+      <a href="{% url 'accounts:register' %}" class="btn-primary w-full text-center block">Sign Up to Enroll</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
