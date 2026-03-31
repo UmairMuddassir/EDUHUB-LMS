@@ -8,6 +8,7 @@ User = get_user_model()
 class RegisterForm(UserCreationForm):
     role = forms.ChoiceField(
         choices=User.Role.choices,
+        initial=User.Role.STUDENT,
         widget=forms.RadioSelect(attrs={"class": "inline-flex gap-4"}),
     )
 

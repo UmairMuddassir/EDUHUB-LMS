@@ -94,6 +94,11 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STORAGES = {
+    # Default file storage for media uploads (ImageField, FileField, etc.)
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    # Static files storage — WhiteNoise for production serving
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
@@ -114,9 +119,11 @@ LOGOUT_REDIRECT_URL = "/accounts/login/"
 
 # ── Production Security ────────────────────────────────────
 if not DEBUG:
-    CSRF_TRUSTED_ORIGINS = os.environ.get(
-        "CSRF_TRUSTED_ORIGINS", ""
-    ).split(",")
+    CSRF_TRUSTED_ORIGINS = [
+        origin.strip()
+        for origin in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
+        if origin.strip()
+    ]
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True

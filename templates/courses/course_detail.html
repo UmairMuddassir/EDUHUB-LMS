@@ -2,93 +2,240 @@
 {% block title %}{{ course.title }}{% endblock %}
 
 {% block content %}
-<div class="mb-6">
-  <a href="{% url 'courses:course_list' %}" class="mb-4 inline-flex items-center gap-1 text-sm text-brand-600 hover:text-brand-700 font-medium">
-    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/></svg>
-    Back to courses
-  </a>
+<!-- ══ Breadcrumb ══ -->
+<nav class="flex items-center gap-2 text-sm text-surface-400 mb-6">
+  <a href="{% url 'courses:course_list' %}" class="hover:text-primary-600 transition font-medium">Courses</a>
+  <svg class="h-3.5 w-3.5 text-surface-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+  <span class="text-surface-600 font-semibold truncate max-w-xs">{{ course.title }}</span>
+</nav>
+
+<!-- ══ Hero Banner ══ -->
+<div class="relative rounded-3xl overflow-hidden mb-10 h-64 sm:h-80">
+  {% if course.thumbnail %}
+  <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="w-full h-full object-cover">
+  {% else %}
+  <div class="w-full h-full course-banner-1 flex items-center justify-center">
+    <svg class="h-24 w-24 text-white/25" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.636 50.636 0 00-2.658-.813A59.906 59.906 0 0112 3.493a59.903 59.903 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342"/></svg>
+  </div>
+  {% endif %}
+  <!-- Gradient overlay -->
+  <div class="absolute inset-0"
+       style="background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);">
+  </div>
+  <!-- Title overlay -->
+  <div class="absolute bottom-0 left-0 right-0 p-8">
+    <span class="badge badge-primary mb-3 !text-[11px]">
+      <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.636 50.636 0 00-2.658-.813A59.906 59.906 0 0112 3.493a59.903 59.903 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342"/></svg>
+      {{ course.get_status_display }}
+    </span>
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-white mb-2 drop-shadow-lg">{{ course.title }}</h1>
+    <div class="flex items-center gap-3 flex-wrap">
+      <div class="flex items-center gap-2">
+        <span class="avatar h-7 w-7 text-xs">{{ course.instructor.username|make_list|first|upper }}</span>
+        <span class="text-sm text-white/80 font-medium">{{ course.instructor.get_full_name|default:course.instructor.username }}</span>
+      </div>
+      <span class="text-white/40">·</span>
+      <span class="text-sm text-white/70">{{ course.enrolled_count }} students enrolled</span>
+    </div>
+  </div>
 </div>
 
+<!-- ══ Content + Sidebar ══ -->
 <div class="grid gap-8 lg:grid-cols-3">
-  <!-- Main Content -->
-  <div class="lg:col-span-2">
-    <div class="card !p-0 overflow-hidden">
-      {% if course.thumbnail %}
-        <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="h-64 w-full object-cover">
-      {% else %}
-        <div class="flex h-64 items-center justify-center bg-gradient-to-br from-brand-100 via-brand-200 to-brand-300">
-          <svg class="h-20 w-20 text-brand-400" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342"/></svg>
+
+  <!-- MAIN CONTENT -->
+  <div class="lg:col-span-2 space-y-8">
+
+    <!-- Description Card -->
+    <div class="card animate-fade-up">
+      <h2 class="text-lg font-extrabold text-surface-800 mb-4 flex items-center gap-2">
+        <span class="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-primary-100 text-primary-600">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </span>
+        About this Course
+      </h2>
+      <div class="text-surface-600 leading-relaxed text-sm">{{ course.description|linebreaks }}</div>
+    </div>
+
+    <!-- What you'll learn -->
+    <div class="card animate-fade-up delay-100">
+      <h2 class="text-lg font-extrabold text-surface-800 mb-4 flex items-center gap-2">
+        <span class="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </span>
+        What you'll learn
+      </h2>
+      <div class="grid sm:grid-cols-2 gap-3">
+        {% for lesson in lessons %}
+        <div class="flex items-start gap-2">
+          <svg class="h-4 w-4 text-primary-500 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          <span class="text-sm text-surface-600">{{ lesson.title }}</span>
         </div>
-      {% endif %}
-      <div class="p-6">
-        <h1 class="text-2xl font-extrabold text-surface-800">{{ course.title }}</h1>
-        <p class="mt-1 text-sm text-surface-400">By {{ course.instructor.get_full_name|default:course.instructor.username }} · {{ course.enrolled_count }} students enrolled</p>
-        <div class="mt-4 text-surface-600 leading-relaxed">{{ course.description|linebreaks }}</div>
+        {% empty %}
+        <p class="text-sm text-surface-400 col-span-2">Lessons will appear here once added.</p>
+        {% endfor %}
       </div>
     </div>
 
-    <!-- Lessons List -->
-    <h2 class="mb-4 mt-8 text-lg font-bold text-surface-700">Lessons ({{ lessons.count }})</h2>
-    {% if lessons %}
-    <div class="space-y-3">
-      {% for lesson in lessons %}
-      <a href="{{ lesson.get_absolute_url }}" class="card flex items-center gap-4 !py-4 group block">
-        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-sm font-bold text-brand-600 group-hover:bg-brand-500 group-hover:text-white transition">
-          {{ lesson.order }}
+    <!-- Lessons Timeline -->
+    <div class="animate-fade-up delay-200">
+      <h2 class="text-lg font-extrabold text-surface-800 mb-5 flex items-center gap-2">
+        <span class="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-primary-100 text-primary-600">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
         </span>
-        <div>
-          <h3 class="font-semibold text-surface-800 group-hover:text-brand-600 transition">{{ lesson.title }}</h3>
-          {% if lesson.ai_summary %}
-            <p class="mt-0.5 text-xs text-surface-400 line-clamp-1">{{ lesson.ai_summary }}</p>
-          {% endif %}
+        Course Content
+        <span class="badge badge-primary ml-auto">{{ lessons.count }} lessons</span>
+      </h2>
+
+      {% if lessons %}
+      <div class="space-y-3">
+        {% for lesson in lessons %}
+        <div class="lesson-item">
+          <a href="{{ lesson.get_absolute_url }}"
+             class="card flex items-center gap-4 !py-4 group hover:border-primary-200 hover:shadow-card-hover transition-all duration-300 animate-fade-up"
+             style="animation-delay: {{ forloop.counter0 }}50ms">
+            <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-sm font-extrabold text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-all duration-300 ring-2 ring-primary-100 group-hover:ring-primary-200">
+              {{ lesson.order }}
+            </span>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-bold text-surface-800 group-hover:text-primary-700 transition text-sm">{{ lesson.title }}</h3>
+              {% if lesson.ai_summary %}
+              <p class="text-xs text-surface-400 line-clamp-1 mt-0.5">{{ lesson.ai_summary }}</p>
+              {% endif %}
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              {% if lesson.ai_summary %}
+              <span class="badge badge-primary !text-[10px]">
+                <svg class="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
+                AI
+              </span>
+              {% endif %}
+              <svg class="h-4 w-4 text-surface-300 group-hover:text-primary-500 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+            </div>
+          </a>
         </div>
-      </a>
-      {% endfor %}
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="card text-center py-10 border-dashed border-2">
+        <p class="text-surface-400 text-sm">No lessons added yet.</p>
+      </div>
+      {% endif %}
     </div>
-    {% else %}
-    <div class="card text-center py-10">
-      <p class="text-surface-400">No lessons added yet.</p>
-    </div>
-    {% endif %}
   </div>
 
-  <!-- Sidebar -->
-  <div class="space-y-6">
-    <div class="card">
-      <h3 class="mb-3 text-sm font-bold uppercase tracking-wider text-surface-400">Course Info</h3>
-      <dl class="space-y-3 text-sm">
-        <div class="flex justify-between"><dt class="text-surface-500">Status</dt><dd class="font-semibold">{{ course.get_status_display }}</dd></div>
-        <div class="flex justify-between"><dt class="text-surface-500">Lessons</dt><dd class="font-semibold">{{ course.total_lessons }}</dd></div>
-        <div class="flex justify-between"><dt class="text-surface-500">Students</dt><dd class="font-semibold">{{ course.enrolled_count }}</dd></div>
-        <div class="flex justify-between"><dt class="text-surface-500">Created</dt><dd class="font-semibold">{{ course.created_at|date:"M d, Y" }}</dd></div>
-      </dl>
-    </div>
+  <!-- ══ SIDEBAR ══ -->
+  <div class="space-y-5">
 
-    {% if user.is_authenticated %}
-      {% if user.is_student %}
-        {% if is_enrolled %}
-          <form method="post" action="{% url 'courses:unenroll' course.slug %}">
-            {% csrf_token %}
-            <button type="submit" class="btn-secondary w-full">Unenroll</button>
-          </form>
+    <!-- Enrollment Card (Sticky) -->
+    <div class="card !p-0 overflow-hidden sticky top-24 animate-slide-right">
+      <!-- Card header gradient -->
+      <div class="p-6 border-b border-surface-100 bg-gradient-to-br from-primary-50 to-violet-50">
+        <p class="text-2xl font-extrabold text-surface-900 mb-0.5">Free Access</p>
+        <p class="text-xs text-surface-400">No credit card required · Instant access</p>
+      </div>
+      <div class="p-6 space-y-4">
+        <!-- CTA Button -->
+        {% if user.is_authenticated %}
+          {% if user.is_student %}
+            {% if is_enrolled %}
+            {% if lessons %}
+            <a href="{{ lessons.first.get_absolute_url }}" class="btn-primary w-full !py-3.5 text-center block">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              Continue Learning
+            </a>
+            {% else %}
+            <div class="btn-primary w-full !py-3.5 text-center opacity-60 cursor-not-allowed">
+              No Lessons Yet
+            </div>
+            {% endif %}
+            <form method="post" action="{% url 'courses:unenroll' course.slug %}">
+              {% csrf_token %}
+              <button type="submit" class="btn-secondary w-full text-center text-xs">Unenroll from course</button>
+            </form>
+            {% else %}
+            <form method="post" action="{% url 'courses:enroll' course.slug %}">
+              {% csrf_token %}
+              <button type="submit" class="btn-primary w-full !py-3.5 animate-pulse-glow">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                Enroll Now — Free
+              </button>
+            </form>
+            {% endif %}
+          {% endif %}
+          {% if user.is_instructor and course.instructor == user %}
+          <div class="space-y-2">
+            <a href="{% url 'courses:course_update' course.slug %}" class="btn-secondary w-full text-center block text-sm">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              Edit Course
+            </a>
+            <a href="{% url 'courses:lesson_create' course.slug %}" class="btn-primary w-full text-center block text-sm">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+              Add Lesson
+            </a>
+            <a href="{% url 'courses:course_delete' course.slug %}" class="btn-danger w-full text-center block text-sm">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              Delete Course
+            </a>
+          </div>
+          {% endif %}
         {% else %}
-          <form method="post" action="{% url 'courses:enroll' course.slug %}">
-            {% csrf_token %}
-            <button type="submit" class="btn-primary w-full">Enroll Now — Free</button>
-          </form>
+        <a href="{% url 'accounts:register' %}" class="btn-primary w-full !py-3.5 text-center block animate-pulse-glow">
+          Sign Up to Enroll Free
+        </a>
+        <p class="text-center text-xs text-surface-400">
+          Already have an account? <a href="{% url 'accounts:login' %}" class="text-primary-600 font-semibold">Sign in</a>
+        </p>
         {% endif %}
-      {% endif %}
 
-      {% if user.is_instructor and course.instructor == user %}
-        <div class="space-y-2">
-          <a href="{% url 'courses:course_update' course.slug %}" class="btn-secondary w-full text-center block">Edit Course</a>
-          <a href="{% url 'courses:lesson_create' course.slug %}" class="btn-primary w-full text-center block">+ Add Lesson</a>
-          <a href="{% url 'courses:course_delete' course.slug %}" class="btn-danger w-full text-center block">Delete Course</a>
+        <!-- Course Details -->
+        <div class="border-t border-surface-100 pt-4 space-y-3">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-surface-500 flex items-center gap-1.5">
+              <svg class="h-4 w-4 text-surface-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+              Lessons
+            </span>
+            <span class="font-bold text-surface-800">{{ course.total_lessons }}</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-surface-500 flex items-center gap-1.5">
+              <svg class="h-4 w-4 text-surface-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              Students
+            </span>
+            <span class="font-bold text-surface-800">{{ course.enrolled_count }}</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-surface-500 flex items-center gap-1.5">
+              <svg class="h-4 w-4 text-surface-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              Created
+            </span>
+            <span class="font-bold text-surface-800">{{ course.created_at|date:"M d, Y" }}</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-surface-500 flex items-center gap-1.5">
+              <svg class="h-4 w-4 text-surface-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              Status
+            </span>
+            <span class="badge {% if course.status == 'published' %}badge-success{% elif course.status == 'draft' %}badge-warning{% else %}badge-surface{% endif %}">
+              {{ course.get_status_display }}
+            </span>
+          </div>
         </div>
-      {% endif %}
-    {% else %}
-      <a href="{% url 'accounts:register' %}" class="btn-primary w-full text-center block">Sign Up to Enroll</a>
-    {% endif %}
+
+        <!-- AI Badge -->
+        <div class="ai-badge">
+          <div class="flex items-center gap-3">
+            <div class="ai-badge-icon">
+              <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-surface-800">AI-Powered</p>
+              <p class="text-[11px] text-surface-500">Each lesson has an automatically generated AI summary to help you learn faster.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}

@@ -1,49 +1,229 @@
 {% extends "base.html" %}
-{% block title %}Register{% endblock %}
+{% block title %}Create Account{% endblock %}
 
-{% block content %}
-<div class="flex min-h-[70vh] items-center justify-center">
-  <div class="w-full max-w-md">
-    <div class="card !p-8">
-      <div class="mb-6 text-center">
-        <h1 class="text-2xl font-bold bg-gradient-to-r from-brand-600 to-brand-800 bg-clip-text text-transparent">Create your account</h1>
-        <p class="mt-1 text-sm text-surface-400">Join EduHub and start learning today</p>
+{% block head_extra %}
+<style>
+  body { background: #0D0A1A !important; }
+  .role-card { position: relative; }
+  .role-card input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+  .role-card.selected {
+    border-color: #7C3AED !important;
+    background: #F5F3FF !important;
+    box-shadow: 0 0 0 3px rgba(124,58,237,0.12);
+  }
+  .role-card .checkmark { display: none; }
+  .role-card.selected .checkmark { display: flex; }
+</style>
+{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block outer_content %}
+<div class="min-h-screen flex">
+
+  <!-- ══ LEFT PANEL ══ -->
+  <div class="hidden lg:flex lg:w-5/12 relative flex-col justify-between p-12 overflow-hidden"
+       style="background: linear-gradient(160deg, #0D0A1A 0%, #1A0A35 60%, #0A1829 100%);">
+
+    <!-- Blobs -->
+    <div class="blob-decoration animate-blob"
+         style="width:350px;height:350px;background:radial-gradient(circle,#7C3AED,#5B21B6);top:-80px;right:-80px;"></div>
+    <div class="blob-decoration animate-blob delay-2s"
+         style="width:280px;height:280px;background:radial-gradient(circle,#F59E0B,#D97706);bottom:-40px;left:-60px;opacity:0.12;"></div>
+    <div class="absolute inset-0 bg-grid-pattern opacity-[0.025]"></div>
+
+    <!-- Orbital circle decoration -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[380px] h-[380px] rounded-full border border-primary-700/20 animate-rotate-slow pointer-events-none">
+      <div class="absolute -top-1.5 left-1/2 w-3 h-3 rounded-full bg-primary-500 shadow-glow -translate-x-1/2"></div>
+    </div>
+
+    <!-- Floating chips -->
+    <div class="absolute inset-0 pointer-events-none">
+      <div class="absolute top-[20%] left-[8%] glass rounded-xl px-3 py-2 animate-float text-white/70 text-xs font-semibold">📚 200+ Courses</div>
+      <div class="absolute top-[55%] right-[6%] glass rounded-xl px-3 py-2 animate-float delay-2s text-white/70 text-xs font-semibold">🤖 AI Summaries</div>
+      <div class="absolute bottom-[25%] left-[10%] glass rounded-xl px-3 py-2 animate-float delay-1s text-white/70 text-xs font-semibold">🏆 Learn Free</div>
+    </div>
+
+    <!-- Main content -->
+    <div class="relative z-10">
+      <!-- Logo -->
+      <div class="flex items-center gap-3 mb-12">
+        <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 text-white shadow-glow animate-pulse-glow">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342"/></svg>
+        </span>
+        <span class="text-2xl font-extrabold text-white">EduHub</span>
       </div>
 
-      <form method="post" class="space-y-4" id="register-form">
+      <h1 class="text-3xl xl:text-4xl font-extrabold text-white leading-tight mb-4">
+        Your learning<br>journey starts <span class="gradient-text">here.</span>
+      </h1>
+      <p class="text-sm text-white/45 leading-relaxed max-w-xs mb-10">
+        Connect with expert instructors, access AI-powered lessons, and grow your skills at your own pace.
+      </p>
+
+      <!-- Benefits list — static HTML, no custom filter needed -->
+      <ul class="space-y-3">
+        <li class="flex items-center gap-3 animate-slide-left">
+          <span class="flex h-6 w-6 items-center justify-center rounded-full bg-primary-600/30 shrink-0">
+            <svg class="h-3.5 w-3.5 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </span>
+          <span class="text-sm text-white/60 font-medium">Access 200+ expert-led courses</span>
+        </li>
+        <li class="flex items-center gap-3 animate-slide-left delay-100">
+          <span class="flex h-6 w-6 items-center justify-center rounded-full bg-primary-600/30 shrink-0">
+            <svg class="h-3.5 w-3.5 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </span>
+          <span class="text-sm text-white/60 font-medium">AI-generated lesson summaries</span>
+        </li>
+        <li class="flex items-center gap-3 animate-slide-left delay-200">
+          <span class="flex h-6 w-6 items-center justify-center rounded-full bg-primary-600/30 shrink-0">
+            <svg class="h-3.5 w-3.5 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </span>
+          <span class="text-sm text-white/60 font-medium">Learn at your own pace</span>
+        </li>
+        <li class="flex items-center gap-3 animate-slide-left delay-300">
+          <span class="flex h-6 w-6 items-center justify-center rounded-full bg-primary-600/30 shrink-0">
+            <svg class="h-3.5 w-3.5 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </span>
+          <span class="text-sm text-white/60 font-medium">Free to get started — always</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="relative z-10 flex items-center gap-2">
+      <span class="inline-flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span class="text-xs text-white/30 font-medium">Free forever · No credit card needed</span>
+    </div>
+  </div>
+
+  <!-- ══ RIGHT PANEL — Registration Form ══ -->
+  <div class="flex flex-1 flex-col justify-center items-center px-6 py-12 lg:px-14 bg-white relative overflow-y-auto">
+
+    <div class="absolute top-0 right-0 w-72 h-72 rounded-full bg-gradient-to-br from-primary-50/60 to-transparent pointer-events-none"></div>
+    <div class="absolute bottom-0 left-0 w-56 h-56 rounded-full bg-gradient-to-tr from-accent-50/40 to-transparent pointer-events-none"></div>
+
+    <div class="w-full max-w-md relative z-10">
+
+      <!-- Mobile Logo -->
+      <div class="flex lg:hidden items-center gap-2 mb-8 justify-center">
+        <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 text-white">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342"/></svg>
+        </span>
+        <span class="text-xl font-extrabold gradient-text-primary">EduHub</span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-7 animate-fade-up">
+        <h2 class="text-3xl font-extrabold text-surface-900 mb-1.5">Create your account ✨</h2>
+        <p class="text-surface-400 text-sm">Completely free. No credit card required.</p>
+      </div>
+
+      <!-- Form -->
+      <form method="post" class="space-y-5 animate-fade-up delay-100" id="register-form">
         {% csrf_token %}
 
         {% for field in form %}
         <div>
-          <label for="{{ field.id_for_label }}" class="mb-1 block text-xs font-semibold uppercase tracking-wider text-surface-500">{{ field.label }}</label>
+          <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+
           {% if field.name == "role" %}
-            <div class="flex gap-4 mt-1">
-              {% for radio in field %}
-                <label class="flex items-center gap-2 cursor-pointer rounded-xl border border-surface-200 px-4 py-2.5 text-sm font-medium transition hover:border-brand-300 hover:bg-brand-50 has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50 has-[:checked]:text-brand-700">
-                  {{ radio.tag }}
-                  {{ radio.choice_label }}
-                </label>
-              {% endfor %}
-            </div>
+          <!-- ── Premium Role Card Selector ── -->
+          <div class="grid grid-cols-2 gap-3 mt-1">
+            {% for radio in field %}
+            <label class="role-card flex flex-col cursor-pointer rounded-2xl border-2 border-surface-100 bg-surface-50 p-4 transition-all duration-200 hover:border-primary-300 hover:bg-primary-50/50"
+                   data-role="{{ radio.choice_value }}">
+              {{ radio.tag }}
+              <!-- Checkmark badge (shown when selected) -->
+              <span class="checkmark absolute top-2.5 right-2.5 h-5 w-5 items-center justify-center rounded-full bg-primary-600">
+                <svg class="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span class="text-2xl mb-2 mt-1">
+                {% if radio.choice_value == "student" %}🎓{% else %}👨‍🏫{% endif %}
+              </span>
+              <span class="text-sm font-bold text-surface-800">{{ radio.choice_label }}</span>
+              <span class="text-[11px] text-surface-400 mt-0.5 leading-relaxed">
+                {% if radio.choice_value == "student" %}Browse &amp; enroll in courses{% elif radio.choice_value == "instructor" %}Create &amp; teach courses{% endif %}
+              </span>
+            </label>
+            {% endfor %}
+          </div>
+
           {% else %}
-            {{ field }}
+          {{ field }}
+          {% endif %}
+
+          {% if field.help_text %}
+          <p class="form-helper">{{ field.help_text }}</p>
           {% endif %}
           {% if field.errors %}
-            {% for error in field.errors %}
-              <p class="mt-1 text-xs text-red-500">{{ error }}</p>
-            {% endfor %}
+          {% for error in field.errors %}
+          <p class="form-error">{{ error }}</p>
+          {% endfor %}
           {% endif %}
         </div>
         {% endfor %}
 
-        <button type="submit" class="btn-primary w-full mt-2">Create Account</button>
+        <!-- Non-field errors -->
+        {% if form.non_field_errors %}
+        <div class="alert alert-error">
+          <svg class="h-4 w-4 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span>{% for error in form.non_field_errors %}{{ error }}{% endfor %}</span>
+        </div>
+        {% endif %}
+
+        <!-- Submit -->
+        <button type="submit" id="register-submit" class="btn-primary w-full !py-3.5 !text-base mt-2">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+          Create My Account
+        </button>
       </form>
 
-      <p class="mt-6 text-center text-sm text-surface-400">
-        Already have an account?
-        <a href="{% url 'accounts:login' %}" class="font-semibold text-brand-600 hover:text-brand-700">Sign in</a>
+      <div class="divider my-6">already a member?</div>
+
+      <p class="text-center text-sm text-surface-400">
+        <a href="{% url 'accounts:login' %}" class="font-bold text-primary-600 hover:text-primary-700 transition">
+          ← Sign in to your account
+        </a>
       </p>
+
+      <div class="mt-6 flex items-center justify-center gap-1.5 text-[11px] text-surface-300">
+        <svg class="h-3.5 w-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        By signing up, you agree to our Terms &amp; Privacy Policy
+      </div>
     </div>
   </div>
 </div>
+
+<!-- Role card JS: handle selection highlight -->
+<script>
+  (function() {
+    var cards = document.querySelectorAll('.role-card');
+    function selectCard(card) {
+      cards.forEach(function(c) { c.classList.remove('selected'); });
+      card.classList.add('selected');
+    }
+    cards.forEach(function(card) {
+      var radio = card.querySelector('input[type="radio"]');
+      if (radio) {
+        // Highlight if Django already set checked (from initial value)
+        if (radio.checked) { card.classList.add('selected'); }
+        radio.addEventListener('change', function() { selectCard(card); });
+        card.addEventListener('click', function() {
+          radio.checked = true;
+          radio.dispatchEvent(new Event('change'));
+        });
+      }
+    });
+    // Auto-select first card AND check its radio if nothing is checked already
+    var anyChecked = document.querySelector('.role-card input[type="radio"]:checked');
+    if (!anyChecked && cards.length > 0) {
+      var firstRadio = cards[0].querySelector('input[type="radio"]');
+      if (firstRadio) {
+        firstRadio.checked = true;
+      }
+      selectCard(cards[0]);
+    }
+  })();
+</script>
 {% endblock %}
