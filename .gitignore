@@ -19,8 +19,9 @@ media/
 # Environment variables
 .env
 
-# Static files (collected)
+# Static files (collected by collectstatic)
 staticfiles/
+staticfiles.json
 
 # Logs
 *.log

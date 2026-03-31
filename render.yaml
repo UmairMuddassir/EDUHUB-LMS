@@ -1,0 +1,24 @@
+databases:
+  - name: eduhub-db
+    plan: free
+    databaseName: eduhub
+    user: eduhub_user
+
+services:
+  - type: web
+    name: eduhub-lms
+    plan: free
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn eduhub.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: eduhub-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: PYTHON_VERSION
+        value: "3.12.2"
